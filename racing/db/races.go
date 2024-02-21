@@ -43,6 +43,7 @@ func (r *racesRepo) Init() error {
 	return err
 }
 
+// Compiles the List of races and applies filters if present
 func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error) {
 	var (
 		err   error
@@ -62,6 +63,7 @@ func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race,
 	return r.scanRaces(rows)
 }
 
+// applies filters and returns a SQL query
 func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFilter) (string, []interface{}) {
 	var (
 		clauses []string
@@ -71,13 +73,18 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 	if filter == nil {
 		return query, args
 	}
-
+	// Filters via Meeting ID - int array
 	if len(filter.MeetingIds) > 0 {
 		clauses = append(clauses, "meeting_id IN ("+strings.Repeat("?,", len(filter.MeetingIds)-1)+"?)")
 
 		for _, meetingID := range filter.MeetingIds {
 			args = append(args, meetingID)
 		}
+	}
+	// Filters out races with visible set to false
+	if filter.VisibleOnly {
+		clauses = append(clauses, "visible = ?")
+		args = append(args, true)
 	}
 
 	if len(clauses) != 0 {
@@ -87,6 +94,7 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 	return query, args
 }
 
+// scans the SQL database and returns races
 func (m *racesRepo) scanRaces(
 	rows *sql.Rows,
 ) ([]*racing.Race, error) {
