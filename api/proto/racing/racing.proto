@@ -25,9 +25,10 @@ message ListRacesResponse {
   repeated Race races = 1;
 }
 
-// Filter for listing races.
+// Filters for listing races.
 message ListRacesRequestFilter {
   repeated int64 meeting_ids = 1;
+  bool visible_only = 2;
 }
 
 /* Resources */
