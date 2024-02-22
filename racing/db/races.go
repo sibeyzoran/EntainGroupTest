@@ -92,8 +92,21 @@ func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race,
 	if err != nil {
 		return nil, err
 	}
+	races, err := r.scanRaces(rows)
+	if err != nil {
+		return nil, err
+	}
+	// Update status based on advertised start time
+	for _, race := range races {
+		advertisedStart := time.Unix(race.AdvertisedStartTime.Seconds, int64(race.AdvertisedStartTime.Nanos))
+		if advertisedStart.Before(time.Now()) {
+			race.Status = "CLOSED"
+		} else {
+			race.Status = "OPEN"
+		}
+	}
 
-	return r.scanRaces(rows)
+	return races, nil
 }
 
 // applies filters and returns a SQL query
