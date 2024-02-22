@@ -46,14 +46,47 @@ func (r *racesRepo) Init() error {
 // Compiles the List of races and applies filters if present
 func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error) {
 	var (
-		err   error
-		query string
-		args  []interface{}
+		err        error
+		query      string
+		args       []interface{}
+		validField bool
 	)
+	// Create a bucket of valid fields that we can order by
+	validFields := []string{"name", "number", "id", "meeting_id", "visible", "advertised_start_time"}
 
 	query = getRaceQueries()[racesList]
-
 	query, args = r.applyFilter(query, filter)
+
+	// Check if orderBy is provided in the filter
+	if filter != nil && filter.OrderBy != "" {
+		// Check if orderBy is a valid field
+		validField = false
+		for _, field := range validFields {
+			if filter.OrderBy == field {
+				validField = true
+				break
+			}
+		}
+		// If orderBy is valid we order by that field else order by advertised_start_time by default
+		if validField {
+			query += " ORDER BY " + filter.OrderBy
+		} else {
+			query += " ORDER BY advertised_start_time"
+		}
+		// Check if sorting direction is provided
+		if filter.Sort != "" {
+			if strings.ToLower(filter.Sort) == "desc" {
+				query += " DESC"
+			} else {
+				query += " ASC"
+			}
+		}
+	} else {
+		// If orderBy is not provided, order by advertised_start_time
+		query += " ORDER BY advertised_start_time"
+		// Default sorting direction
+		query += " ASC"
+	}
 
 	rows, err := r.db.Query(query, args...)
 	if err != nil {
