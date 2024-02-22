@@ -73,9 +73,19 @@ func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race,
 		} else {
 			query += " ORDER BY advertised_start_time"
 		}
+		// Check if sorting direction is provided
+		if filter.Sort != "" {
+			if strings.ToLower(filter.Sort) == "desc" {
+				query += " DESC"
+			} else {
+				query += " ASC"
+			}
+		}
 	} else {
 		// If orderBy is not provided, order by advertised_start_time
 		query += " ORDER BY advertised_start_time"
+		// Default sorting direction
+		query += " ASC"
 	}
 
 	rows, err := r.db.Query(query, args...)
