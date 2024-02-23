@@ -19,6 +19,8 @@ type RacesRepo interface {
 
 	// List will return a list of races.
 	List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error)
+	// GetByID will return a single race based on the ID provided
+	GetByID(id int64) (*racing.Race, error)
 }
 
 type racesRepo struct {
@@ -41,6 +43,40 @@ func (r *racesRepo) Init() error {
 	})
 
 	return err
+}
+
+// Get a race by its Id
+func (r *racesRepo) GetByID(id int64) (*racing.Race, error) {
+	// SQL Query to retrieve the race by its ID
+	query := "SELECT id, meeting_id, name, number, visible, advertised_start_time FROM races WHERE id = ?"
+
+	// Execute query
+	row := r.db.QueryRow(query, id)
+
+	// Scan the row and get race
+	var race racing.Race
+	var advertisedStart time.Time
+	err := row.Scan(&race.Id, &race.MeetingId, &race.Name, &race.Number, &race.Visible, &advertisedStart)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // race not found
+		}
+		return nil, err
+	}
+	// Convert advertised start time to protobuf Timestamp
+	ts, err := ptypes.TimestampProto(advertisedStart)
+	if err != nil {
+		return nil, err
+	}
+	race.AdvertisedStartTime = ts
+
+	// Update status based on advertised start time
+	if advertisedStart.Before(time.Now()) {
+		race.Status = "CLOSED"
+	} else {
+		race.Status = "OPEN"
+	}
+	return &race, nil
 }
 
 // Compiles the List of races and applies filters if present
