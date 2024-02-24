@@ -27,9 +27,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SportsClient interface {
-	// ListSports will return a collection of all sports.
+	// ListSports returns a list of all sports.
 	ListSports(ctx context.Context, in *ListSportsRequest, opts ...grpc.CallOption) (*ListSportsResponse, error)
-	// GetSportByID will return a single sport event
+	// GetSportByID returns the sport with the specified ID.
 	GetSportByID(ctx context.Context, in *GetSportByIDRequest, opts ...grpc.CallOption) (*GetSportByIDResponse, error)
 }
 
@@ -60,16 +60,17 @@ func (c *sportsClient) GetSportByID(ctx context.Context, in *GetSportByIDRequest
 }
 
 // SportsServer is the server API for Sports service.
-// All implementations should embed UnimplementedSportsServer
+// All implementations must embed UnimplementedSportsServer
 // for forward compatibility
 type SportsServer interface {
-	// ListSports will return a collection of all sports.
+	// ListSports returns a list of all sports.
 	ListSports(context.Context, *ListSportsRequest) (*ListSportsResponse, error)
-	// GetSportByID will return a single sport event
+	// GetSportByID returns the sport with the specified ID.
 	GetSportByID(context.Context, *GetSportByIDRequest) (*GetSportByIDResponse, error)
+	mustEmbedUnimplementedSportsServer()
 }
 
-// UnimplementedSportsServer should be embedded to have forward compatible implementations.
+// UnimplementedSportsServer must be embedded to have forward compatible implementations.
 type UnimplementedSportsServer struct {
 }
 
@@ -79,6 +80,7 @@ func (UnimplementedSportsServer) ListSports(context.Context, *ListSportsRequest)
 func (UnimplementedSportsServer) GetSportByID(context.Context, *GetSportByIDRequest) (*GetSportByIDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSportByID not implemented")
 }
+func (UnimplementedSportsServer) mustEmbedUnimplementedSportsServer() {}
 
 // UnsafeSportsServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to SportsServer will

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"git.neds.sh/matty/entain/api/proto/racing"
+	"git.neds.sh/matty/entain/api/proto/sports"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 )
@@ -31,6 +32,15 @@ func run() error {
 
 	mux := runtime.NewServeMux()
 	if err := racing.RegisterRacingHandlerFromEndpoint(
+		ctx,
+		mux,
+		*grpcEndpoint,
+		[]grpc.DialOption{grpc.WithInsecure()},
+	); err != nil {
+		return err
+	}
+
+	if err := sports.RegisterSportsHandlerFromEndpoint(
 		ctx,
 		mux,
 		*grpcEndpoint,

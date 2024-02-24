@@ -1,7 +1,8 @@
 package db
 
 const (
-	racesList = "list"
+	racesList  = "list"
+	sportsList = "list"
 )
 
 func getRaceQueries() map[string]string {
@@ -15,6 +16,20 @@ func getRaceQueries() map[string]string {
 				visible, 
 				advertised_start_time 
 			FROM races
+		`,
+	}
+}
+
+func getSportQueries() map[string]string {
+	return map[string]string{
+		sportsList: `
+			SELECT 
+				id, 
+				name, 
+				advertised_start_time , 
+				sport, 
+				current_score
+			FROM sports
 		`,
 	}
 }
