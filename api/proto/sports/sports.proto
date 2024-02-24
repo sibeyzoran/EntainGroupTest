@@ -1,0 +1,62 @@
+syntax = "proto3";
+package sports;
+
+option go_package = "/sports";
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+service Sports {
+  // ListSports returns a list of all sports.
+  rpc ListSports(ListSportsRequest) returns (ListSportsResponse) {
+    option (google.api.http) = { post: "/v1/list-sports", body: "*" };
+  }
+
+  // GetSportByID returns the sport with the specified ID.
+  rpc GetSportByID(GetSportByIDRequest) returns (GetSportByIDResponse) {
+    option (google.api.http) = {get: "/v1/sports/{id}"};
+  }
+}
+
+// Request to GetSportByID
+message GetSportByIDRequest {
+  int64 id = 1;
+}
+
+//Response to GetSportByID call
+message GetSportByIDResponse {
+  sportEvent sport = 1;
+}
+// Request to ListSports
+message ListSportsRequest {
+  ListSportsRequestFilter filter = 1;
+}
+
+// Response to ListSports call.
+message ListSportsResponse {
+  repeated sportEvent sports = 1;
+}
+
+// Filter for listing sports.
+message ListSportsRequestFilter {
+  repeated int64 ids = 1;
+  string sport = 2;
+  string orderBy = 3;
+  string sort = 4;
+}
+
+/* Resources */
+
+// A sportEvent resource.
+message sportEvent {
+  // ID represents a unique identifier for the sport.
+  int64 id = 1;
+  // Name is the official name given to the sport.
+  string name = 2;
+  // AdvertisedStartTime is the time the sport is advertised to run.
+  google.protobuf.Timestamp advertised_start_time = 3;
+  // Sport is the type of sport the event is played in
+  string sport = 4;
+  // Current score is the current score of the sport
+  string current_score = 5;
+}
