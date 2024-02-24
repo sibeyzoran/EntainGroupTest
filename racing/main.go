@@ -6,9 +6,10 @@ import (
 	"log"
 	"net"
 
-	"git.neds.sh/matty/entain/racing/db"
-	"git.neds.sh/matty/entain/racing/proto/racing"
-	"git.neds.sh/matty/entain/racing/service"
+	"github.com/sibeyzoran/EntainGroupTest/racing/db"
+	"github.com/sibeyzoran/EntainGroupTest/racing/proto/racing"
+	"github.com/sibeyzoran/EntainGroupTest/racing/proto/sports"
+	"github.com/sibeyzoran/EntainGroupTest/racing/service"
 	"google.golang.org/grpc"
 )
 
@@ -45,6 +46,12 @@ func run() error {
 	racing.RegisterRacingServer(
 		grpcServer,
 		service.NewRacingService(
+			racesRepo,
+		),
+	)
+	sports.RegisterSportserver(
+		grpcServer,
+		service.NewSportsService(
 			racesRepo,
 		),
 	)
