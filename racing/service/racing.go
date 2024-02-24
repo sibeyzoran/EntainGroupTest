@@ -23,6 +23,7 @@ func NewRacingService(racesRepo db.RacesRepo) Racing {
 	return &racingService{racesRepo}
 }
 
+// List all races
 func (s *racingService) ListRaces(ctx context.Context, in *racing.ListRacesRequest) (*racing.ListRacesResponse, error) {
 	races, err := s.racesRepo.List(in.Filter)
 	if err != nil {
@@ -32,6 +33,7 @@ func (s *racingService) ListRaces(ctx context.Context, in *racing.ListRacesReque
 	return &racing.ListRacesResponse{Races: races}, nil
 }
 
+// Gets and returns a single race
 func (s *racingService) GetRaceByID(ctx context.Context, in *racing.GetRaceByIDRequest) (*racing.GetRaceByIDResponse, error) {
 	race, err := s.racesRepo.GetByID(in.Id)
 	if err != nil {
