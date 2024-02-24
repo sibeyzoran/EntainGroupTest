@@ -67,7 +67,7 @@ type RacingServer interface {
 	ListRaces(context.Context, *ListRacesRequest) (*ListRacesResponse, error)
 	// GetRaceByID will return a single race
 	GetRaceByID(context.Context, *GetRaceByIDRequest) (*GetRaceByIDResponse, error)
-	mustEmbedUnimplementedRacingServer()
+	//mustEmbedUnimplementedRacingServer()
 }
 
 // UnimplementedRacingServer must be embedded to have forward compatible implementations.

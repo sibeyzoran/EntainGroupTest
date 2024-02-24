@@ -25,12 +25,13 @@ func NewSportingService(racesRepo db.RacesRepo) Sporting {
 }
 
 func (s *sportingService) ListSports(ctx context.Context, in *sports.ListSportsRequest) (*sports.ListSportsResponse, error) {
-	sports, err := s.racesRepo.ListSports(in.Filter)
+	sportEvents, err := s.racesRepo.ListSports(in.Filter)
 	if err != nil {
 		return nil, err
 	}
-
-	return &sports.ListSportsResponse{Sports: sports}, nil
+	// Create a new ListSportsResponse (unsure why I had to make this into a variable)
+	response := &sports.ListSportsResponse{Sports: sportEvents}
+	return response, nil
 }
 
 func (s *sportingService) GetSportByID(ctx context.Context, in *sports.GetSportByIDRequest) (*sports.GetSportByIDResponse, error) {

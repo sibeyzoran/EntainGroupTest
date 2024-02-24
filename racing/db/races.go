@@ -103,14 +103,19 @@ func (s *racesRepo) ListSports(filter *sports.ListSportsRequestFilter) ([]*sport
 	if err != nil {
 		return nil, err
 	}
-
+	// Set current score to "0-0" for sports events with future advertised start times
+	for _, sport := range sports {
+		if time.Unix(sport.AdvertisedStartTime.GetSeconds(), 0).After(time.Now()) {
+			sport.CurrentScore = "0-0"
+		}
+	}
 	return sports, nil
 }
 
 // Get a sport by its Id
 func (r *racesRepo) GetSportEventByID(id int64) (*sports.SportEvent, error) {
-	// SQL Query to retrieve the race by its ID
-	query := "SELECT id, name, advertised_start_time, sport, current_score  FROM races WHERE id = ?"
+	// SQL Query to retrieve the sport by its ID
+	query := "SELECT id, name, advertised_start_time, sport, current_score  FROM sports WHERE id = ?"
 
 	// Execute query
 	row := r.db.QueryRow(query, id)
@@ -121,23 +126,22 @@ func (r *racesRepo) GetSportEventByID(id int64) (*sports.SportEvent, error) {
 	err := row.Scan(&sport.Id, &sport.Name, &advertisedStart, &sport.Sport, &sport.CurrentScore)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil // race not found
+			return nil, nil // sport not found
 		}
 		return nil, err
 	}
 	// Convert advertised start time to protobuf Timestamp
-	/*ts, err := ptypes.TimestampProto(advertisedStart)
+	ts, err := ptypes.TimestampProto(advertisedStart)
 	if err != nil {
 		return nil, err
 	}
-	race.AdvertisedStartTime = ts
+	sport.AdvertisedStartTime = ts
 
-	// Update status based on advertised start time
-	if advertisedStart.Before(time.Now()) {
-		race.Status = "CLOSED"
-	} else {
-		race.Status = "OPEN"
-	}*/
+	// Check if advertised start time is in the future and set score to 0-0 because it hasn't happened yet
+	if advertisedStart.After(time.Now()) {
+		sport.CurrentScore = "0-0"
+	}
+
 	return &sport, nil
 }
 
@@ -247,7 +251,6 @@ func (s *racesRepo) applySportsFilter(query string, filter *sports.ListSportsReq
 		clauses []string
 		args    []interface{}
 	)
-	var availableSports = []string{"basketball", "soccer", "hockey", "rugby league", "afl"}
 
 	if filter == nil {
 		return query, args
@@ -263,15 +266,13 @@ func (s *racesRepo) applySportsFilter(query string, filter *sports.ListSportsReq
 
 	// Filter via sport
 	if filter.Sport != "" {
-		var validSport bool
-		for _, sport := range availableSports {
-			if strings.EqualFold(filter.Sport, sport) {
-				validSport = true
-				break
-			}
-			if validSport {
+		validSports := []string{"basketball", "soccer", "hockey", "rugby league", "afl"}
+		inputSport := strings.ToLower(filter.Sport)
+		for _, sport := range validSports {
+			if inputSport == sport {
 				clauses = append(clauses, "sport = ?")
-				args = append(args, filter.Sport)
+				args = append(args, sport)
+				break
 			}
 		}
 	}
