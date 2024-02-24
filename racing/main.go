@@ -49,9 +49,10 @@ func run() error {
 			racesRepo,
 		),
 	)
-	sports.RegisterSportserver(
+
+	sports.RegisterSportsServer(
 		grpcServer,
-		service.NewSportsService(
+		service.NewSportingService(
 			racesRepo,
 		),
 	)

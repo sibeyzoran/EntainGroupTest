@@ -67,7 +67,7 @@ type SportsServer interface {
 	ListSports(context.Context, *ListSportsRequest) (*ListSportsResponse, error)
 	// GetSportByID will return a single sport event
 	GetSportByID(context.Context, *GetSportByIDRequest) (*GetSportByIDResponse, error)
-	mustEmbedUnimplementedSportsServer()
+	//mustEmbedUnimplementedSportsServer()
 }
 
 // UnimplementedSportsServer must be embedded to have forward compatible implementations.

@@ -9,7 +9,7 @@ import (
 )
 
 // Possible Sports for seeding into DB Table
-var sportsData = []string{"Basketball", "Soccer", "Hockey", "Rugby League", "AFL"}
+var sportsData = []string{"basketball", "soccer", "hockey", "rugby League", "afl"}
 
 func (r *racesRepo) seed() error {
 	// Prepare SQL table if it doesn't exist
