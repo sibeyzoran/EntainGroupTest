@@ -9,7 +9,7 @@ import (
 )
 
 // Possible Sports for seeding into DB Table
-var sports = []string{"Basketball", "Soccer", "Hockey", "Rugby League", "AFL"}
+var sportsData = []string{"Basketball", "Soccer", "Hockey", "Rugby League", "AFL"}
 
 func (r *racesRepo) seed() error {
 	// Prepare SQL table if it doesn't exist
@@ -47,8 +47,8 @@ func (r *racesRepo) seed() error {
 		name := fmt.Sprintf("%s VS %s", teamA, teamB)
 
 		// Select a random sport
-		sportIndex := rand.Intn(len(sports))
-		sport := sports[sportIndex]
+		sportIndex := rand.Intn(len(sportsData))
+		sport := sportsData[sportIndex]
 
 		// Make a random score
 		currentScore := fmt.Sprintf("%d-%d", rand.Intn(151), rand.Intn(151))

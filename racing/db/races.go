@@ -9,7 +9,8 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	_ "github.com/mattn/go-sqlite3"
 
-	"git.neds.sh/matty/entain/racing/proto/racing"
+	"github.com/sibeyzoran/EntainGroupTest/racing/proto/racing"
+	"github.com/sibeyzoran/EntainGroupTest/racing/proto/sports"
 )
 
 // RacesRepo provides repository access to races.
@@ -22,9 +23,9 @@ type RacesRepo interface {
 	// GetByID will return a single race based on the ID provided
 	GetByID(id int64) (*racing.Race, error)
 	// List Sports will return a list of sports
-	ListSports(filter *racing.ListSportsRequestFilter) ([]*racing.SportEvent, error)
+	ListSports(filter *sports.ListSportsRequestFilter) ([]*sports.SportEvent, error)
 	// GetSportByID will return a single sport event based on the ID provided
-	GetSportEventByID(id int64) (*racing.SportEvent, error)
+	GetSportEventByID(id int64) (*sports.SportEvent, error)
 }
 
 type racesRepo struct {
@@ -50,7 +51,7 @@ func (r *racesRepo) Init() error {
 }
 
 // Compiles the List of sports and applies filters if present
-func (s *racesRepo) ListSports(filter *racing.ListSportsRequestFilter) ([]*racing.SportEvent, error) {
+func (s *racesRepo) ListSports(filter *sports.ListSportsRequestFilter) ([]*sports.SportEvent, error) {
 	var (
 		err        error
 		query      string
@@ -107,7 +108,7 @@ func (s *racesRepo) ListSports(filter *racing.ListSportsRequestFilter) ([]*racin
 }
 
 // Get a sport by its Id
-func (r *racesRepo) GetSportEventByID(id int64) (*racing.SportEvent, error) {
+func (r *racesRepo) GetSportEventByID(id int64) (*sports.SportEvent, error) {
 	// SQL Query to retrieve the race by its ID
 	query := "SELECT id, name, advertised_start_time, sport, current_score  FROM races WHERE id = ?"
 
@@ -115,7 +116,7 @@ func (r *racesRepo) GetSportEventByID(id int64) (*racing.SportEvent, error) {
 	row := r.db.QueryRow(query, id)
 
 	// Scan the row and get the sport event
-	var sport racing.SportEvent
+	var sport sports.SportEvent
 	var advertisedStart time.Time
 	err := row.Scan(&sport.Id, &sport.Name, &advertisedStart, &sport.Sport, &sport.CurrentScore)
 	if err != nil {
@@ -241,7 +242,7 @@ func (r *racesRepo) List(filter *racing.ListRacesRequestFilter) ([]*racing.Race,
 }
 
 // Applies filters for sports and returns a SQL query
-func (s *racesRepo) applySportsFilter(query string, filter *racing.ListSportsRequestFilter) (string, []interface{}) {
+func (s *racesRepo) applySportsFilter(query string, filter *sports.ListSportsRequestFilter) (string, []interface{}) {
 	var (
 		clauses []string
 		args    []interface{}
@@ -316,11 +317,11 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 // Scans the SQL database and returns sport events
 func (m *racesRepo) scanSportEvents(
 	rows *sql.Rows,
-) ([]*racing.SportEvent, error) {
-	var sportEvents []*racing.SportEvent
+) ([]*sports.SportEvent, error) {
+	var sportEvents []*sports.SportEvent
 
 	for rows.Next() {
-		var sport racing.SportEvent
+		var sport sports.SportEvent
 		var advertisedStart time.Time
 
 		if err := rows.Scan(&sport.Id, &sport.Name, &advertisedStart, &sport.Sport, &sport.CurrentScore); err != nil {
