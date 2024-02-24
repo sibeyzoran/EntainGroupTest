@@ -21,5 +21,3 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240213162025-012b6fc9bca9 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/sibeyzoran/EntainGroupTest/api/proto/sports => github.com/sibeyzoran/EntainGroupTest/api/proto/sports Sports-Service
