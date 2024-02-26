@@ -14,7 +14,7 @@ The front end has two endpoints which users can access. They are:
 
 Each endpoint has a single GET and POST methods. These being:
 1. GET: /races/{id} (where ID equals the ID of a single race)
-1. POST: /list-races
+1. POST: /list-races or - /list-sports
 
 ### Unique to racing
 
