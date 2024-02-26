@@ -149,7 +149,7 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
         }
 }'
 ```
-You should receive a response similar to:
+You should receive a JSON response similar to:
 ```JSON
 {
     "races": {
@@ -187,7 +187,7 @@ curl -X "POST" "http://localhost:8000/v1/list-sports" \
         }
 }'
 ```
-You should receive a response similar to:
+You should receive a JSON response similar to:
 ```JSON
 {
     "sports": [
@@ -199,7 +199,6 @@ You should receive a response similar to:
 }
 ```
 
-This will return a list of races in JSON format that looks similar to.
 ## Future implementations:
 The major outstanding deficit in these projects are the lack of unit tests. Some tests that will need to be written but haven't yet are as follows:
 
