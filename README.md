@@ -100,7 +100,7 @@ You should receive a JSON response that looks similar to:
 
 ```JSON
 {
-    race": {
+    "race": {
         "id": "83",
         "meetingId": "8",
         "name": "Wisconsin bats",
