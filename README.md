@@ -90,13 +90,14 @@ Now that both the API and the gRPC server are running and listening on their res
 
 ### Using the GET method
 There are multiple ways to send HTTP requests to an endpoint. Here I will provide examples using curl - a unix based cmdlet.
-
-1. Open a terminal
-1. ```bash
+Racing example:
+1. Open a terminal and type
+```bash
 curl -X "GET" "http://localhost:8000/v1/races/83" -H 'Content-Type: application/json'
 ```
 
 You should receive a JSON response that looks similar to:
+
 ```JSON
 {
     race": {
@@ -110,15 +111,33 @@ You should receive a JSON response that looks similar to:
 }
 }
 ```
-Simply replacing /races/ with /sports/ will return a sport event instead.
+Sports example:
+1. Open a terminal and type
+```bash
+curl -X "GET" "http://localhost:8000/v1/sports/13" -H 'Content-Type: application/json'
+```
+
+You should receive a JSON response that looks similar to:
+
+```JSON
+{
+    sportEvent": {
+        "id": "13",
+        "name": "Wisconsin bats vs Alabama Ants",
+        "sport": "Basketball"
+        "advertisedStartTime": "2021-03-01T18:49:21Z",
+        "currentScore": "120-103"
+}
+}
+```
 
 
 ### Using the POST method
 There are multiple ways to send HTTP requests to an endpoint. Here I will provide examples using curl - a unix base cmdlet. The POST method allows users to create a filter to filter the list to only the results they want. They can narrow the list down by providing an array of meeting ID's as well as only returning races that are visible. The sports endpoint also allows for filtering via ID's and the type of sport.
 
 Racing example:
-1. Open a terminal
-1. ```bash
+1. Open a terminal and type:
+```bash
 curl -X "POST" "http://localhost:8000/v1/list-races" \
     -H 'Content-Type: application/json' \
     -d $'{
@@ -128,7 +147,8 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
             "orderBy": "name",
             "sort": "desc"
         }
-}'```
+}'
+```
 You should receive a response similar to:
 ```JSON
 {
@@ -151,6 +171,31 @@ You should receive a response similar to:
         "status": "OPEN"
     }
 
+}
+```
+
+Sports Example:
+1. Open a terminal and type:
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-sports" \
+    -H 'Content-Type: application/json' \
+    -d $'{
+        "filter":{
+            "sport":"basketball",
+            "orderBy": "name",
+            "sort": "desc"
+        }
+}'
+```
+You should receive a response similar to:
+```JSON
+{
+    "sports": [
+        { "id": "33", "name": "Alabama druids VS Oklahoma chimeras", "advertisedStartTime": "2024-02-26T10:02:56Z", "sport": "basketball", "currentScore": "0-0" },
+        { "id": "32", "name": "Alaska sons VS Colorado dwarves", "advertisedStartTime": "2024-02-25T04:29:13Z", "sport": "basketball", "currentScore": "0-0" },
+        { "id": "35", "name": "Georgia ants VS Indiana witches", "advertisedStartTime": "2024-02-23T15:28:36Z", "sport": "basketball", "currentScore": "107-3" },
+        { "id": "9", "name": "Georgia elephants VS Arkansas gnomes", "advertisedStartTime": "2024-02-25T04:42:52Z", "sport": "basketball", "currentScore": "0-0" }
+    ]
 }
 ```
 
