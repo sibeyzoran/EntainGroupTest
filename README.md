@@ -1,22 +1,22 @@
 [[TOC]]
 
-##Target User Audience
+## Target User Audience
 A user of the wagering business who wants to get updates for racing and sporting events.
 
-##Overview
+## Overview
 The racing a sporting service utilizes a front end API to serve as an entry point to collecting information about racing and sporting events. As such there are two projects: 
 1. The API front end
 1. The gRPC server back end
 
 The front end has two endpoints which users can access. They are:
 1. /races
-2. /sports
+1. /sports
 
 Each endpoint has a single GET and POST methods. These being:
 1. GET: /races/{id} (where ID equals the ID of a single race)
 1. POST: /races/list-races
 
-###Unique to racing
+### Unique to racing
 
 Race objects returned are made up of the following variables:
 1. int64 id
@@ -33,7 +33,7 @@ Racing POST requests can implement a filter which is made up by:
 1. string orderBy - allows users to orderBy any variable in a race e.g. advertised_start_time (by default will orderBy this), name or, ID
 1. string sort - allows users to sort by ascending or descending order by entering "asc" or "desc"
 
-###Unique to sports
+### Unique to sports
 
 Sport objects returned are made up of the following variables:
 1. int64 id
@@ -48,9 +48,9 @@ Sport POST requests can implement a filter which is made up by:
 1. string orderBy - allows users to orderBy any variable in a race e.g. advertised_start_time (by default will orderBy this), sport or, ID
 1. string sort - allows users to sort by ascending or descending order by entering "asc" or "desc"
 
-##How to use
+## How to use
 
-###Setup
+### Setup
 1. Clone the code in the repository
 1. Install Go (latest).
 
@@ -88,7 +88,7 @@ go build && ./api
 
 Now that both the API and the gRPC server are running and listening on their respective ports we can begin sending HTTP requests to the API.
 
-###Using the GET method
+### Using the GET method
 There are multiple ways to send HTTP requests to an endpoint. Here I will provide examples using curl - a unix based cmdlet.
 
 1. Open a terminal
@@ -113,7 +113,7 @@ You should receive a JSON response that looks similar to:
 Simply replacing /races/ with /sports/ will return a sport event instead.
 
 
-###Using the POST method
+### Using the POST method
 There are multiple ways to send HTTP requests to an endpoint. Here I will provide examples using curl - a unix base cmdlet. The POST method allows users to create a filter to filter the list to only the results they want. They can narrow the list down by providing an array of meeting ID's as well as only returning races that are visible. The sports endpoint also allows for filtering via ID's and the type of sport.
 
 Racing example:
@@ -155,7 +155,7 @@ You should receive a response similar to:
 ```
 
 This will return a list of races in JSON format that looks similar to.
-##Future implementations:
+## Future implementations:
 The major outstanding deficit in these projects are the lack of unit tests. Some tests that will need to be written but haven't yet are as follows:
 
 1. Creating mock responses to each endpoints HTTP requests
