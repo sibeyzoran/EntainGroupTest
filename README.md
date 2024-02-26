@@ -191,10 +191,32 @@ You should receive a JSON response similar to:
 ```JSON
 {
     "sports": [
-        { "id": "33", "name": "Alabama druids VS Oklahoma chimeras", "advertisedStartTime": "2024-02-26T10:02:56Z", "sport": "basketball", "currentScore": "0-0" },
-        { "id": "32", "name": "Alaska sons VS Colorado dwarves", "advertisedStartTime": "2024-02-25T04:29:13Z", "sport": "basketball", "currentScore": "0-0" },
-        { "id": "35", "name": "Georgia ants VS Indiana witches", "advertisedStartTime": "2024-02-23T15:28:36Z", "sport": "basketball", "currentScore": "107-3" },
-        { "id": "9", "name": "Georgia elephants VS Arkansas gnomes", "advertisedStartTime": "2024-02-25T04:42:52Z", "sport": "basketball", "currentScore": "0-0" }
+        {
+            "id": "33",
+            "name": "Alabama druids VS Oklahoma chimeras",
+            "advertisedStartTime": "2024-02-26T10:02:56Z",
+            "sport": "basketball",
+            "currentScore": "0-0" },
+        {
+            "id": "32",
+            "name": "Alaska sons VS Colorado dwarves",
+            "advertisedStartTime": "2024-02-25T04:29:13Z",
+            "sport": "basketball",
+            "currentScore": "0-0"
+        },
+        {
+            "id": "35",
+            "name": "Georgia ants VS Indiana witches",
+            "advertisedStartTime": "2024-02-23T15:28:36Z",
+            "sport": "basketball",
+            "currentScore": "107-3"
+        },
+        {
+            "id": "9",
+            "name": "Georgia elephants VS Arkansas gnomes",
+            "advertisedStartTime": "2024-02-25T04:42:52Z",
+            "sport": "basketball",
+            "currentScore": "0-0" }
     ]
 }
 ```
