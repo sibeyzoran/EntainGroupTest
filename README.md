@@ -121,7 +121,7 @@ You should receive a JSON response that looks similar to:
 
 ```JSON
 {
-    sportEvent": {
+    "sports": {
         "id": "13",
         "name": "Wisconsin bats vs Alabama Ants",
         "sport": "Basketball"
@@ -152,7 +152,7 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 You should receive a response similar to:
 ```JSON
 {
-    races": {
+    "races": {
         "id": "83",
         "meetingId": "8",
         "name": "Wisconsin bats",
