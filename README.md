@@ -1,4 +1,4 @@
-[[TOC]]
+# Entain Racing Back End Test Project
 
 ## Target User Audience
 A user of the wagering business who wants to get updates for racing and sporting events.
