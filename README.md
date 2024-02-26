@@ -1,29 +1,57 @@
-## Entain BE Technical Test
+[[TOC]]
 
-This test has been designed to demonstrate your ability and understanding of technologies commonly used at Entain. 
+##Target User Audience
+A user of the wagering business who wants to get updates for racing and sporting events.
 
-Please treat the services provided as if they would live in a real-world environment.
+##Overview
+The racing a sporting service utilizes a front end API to serve as an entry point to collecting information about racing and sporting events. As such there are two projects: 
+1. The API front end
+1. The gRPC server back end
 
-### Directory Structure
+The front end has two endpoints which users can access. They are:
+1. /races
+2. /sports
 
-- `api`: A basic REST gateway, forwarding requests onto service(s).
-- `racing`: A very bare-bones racing service.
+Each endpoint has a single GET and POST methods. These being:
+1. GET: /races/{id} (where ID equals the ID of a single race)
+1. POST: /races/list-races
 
-```
-entain/
-├─ api/
-│  ├─ proto/
-│  ├─ main.go
-├─ racing/
-│  ├─ db/
-│  ├─ proto/
-│  ├─ service/
-│  ├─ main.go
-├─ README.md
-```
+###Unique to racing
 
-### Getting Started
+Race objects returned are made up of the following variables:
+1. int64 id
+1. int64 meeting_id
+1. string name
+1. int64 number
+1. bool visible
+1. datetime advertised_start_time
+1. string status
 
+Racing POST requests can implement a filter which is made up by:
+1. int64 []meeting_ids  - an array of numbers
+1. bool visible_only - true to see only visible races, by default is set to false and will return both visible and hidden races
+1. string orderBy - allows users to orderBy any variable in a race e.g. advertised_start_time (by default will orderBy this), name or, ID
+1. string sort - allows users to sort by ascending or descending order by entering "asc" or "desc"
+
+###Unique to sports
+
+Sport objects returned are made up of the following variables:
+1. int64 id
+1. string name
+1. datetime advertised_start_time
+1. string sport
+1. string current_score
+
+Sport POST requests can implement a filter which is made up by:
+1. int64 []ids - an array of numbers
+1. string sport - the name of a sport. Currently these are limited to: Basketball, AFL, Soccer, Hockey and, Rugby League.
+1. string orderBy - allows users to orderBy any variable in a race e.g. advertised_start_time (by default will orderBy this), sport or, ID
+1. string sort - allows users to sort by ascending or descending order by entering "asc" or "desc"
+
+##How to use
+
+###Setup
+1. Clone the code in the repository
 1. Install Go (latest).
 
 ```bash
@@ -32,7 +60,7 @@ brew install go
 
 ... or [see here](https://golang.org/doc/install).
 
-2. Install `protoc`
+1. Install `protoc`
 
 ```
 brew install protobuf
@@ -40,7 +68,7 @@ brew install protobuf
 
 ... or [see here](https://grpc.io/docs/protoc-installation/).
 
-2. In a terminal window, start our racing service...
+1. In a terminal window, start our racing service...
 
 ```bash
 cd ./racing
@@ -49,7 +77,7 @@ go build && ./racing
 ➜ INFO[0000] gRPC server listening on: localhost:9000
 ```
 
-3. In another terminal window, start our api service...
+1. In another terminal window, start our api service...
 
 ```bash
 cd ./api
@@ -58,59 +86,78 @@ go build && ./api
 ➜ INFO[0000] API server listening on: localhost:8000
 ```
 
-4. Make a request for races... 
+Now that both the API and the gRPC server are running and listening on their respective ports we can begin sending HTTP requests to the API.
 
-```bash
+###Using the GET method
+There are multiple ways to send HTTP requests to an endpoint. Here I will provide examples using curl - a unix based cmdlet.
+
+1. Open a terminal
+1. ```bash
+curl -X "GET" "http://localhost:8000/v1/races/83" -H 'Content-Type: application/json'
+```
+
+You should receive a JSON response that looks similar to:
+```JSON
+{
+    race": {
+        "id": "83",
+        "meetingId": "8",
+        "name": "Wisconsin bats",
+        "number": "10",
+        "visible": true,
+        "advertisedStartTime": "2021-03-01T18:49:21Z",
+        "status": "CLOSED"
+}
+}
+```
+Simply replacing /races/ with /sports/ will return a sport event instead.
+
+
+###Using the POST method
+There are multiple ways to send HTTP requests to an endpoint. Here I will provide examples using curl - a unix base cmdlet. The POST method allows users to create a filter to filter the list to only the results they want. They can narrow the list down by providing an array of meeting ID's as well as only returning races that are visible. The sports endpoint also allows for filtering via ID's and the type of sport.
+
+Racing example:
+1. Open a terminal
+1. ```bash
 curl -X "POST" "http://localhost:8000/v1/list-races" \
-     -H 'Content-Type: application/json' \
-     -d $'{
-  "filter": {}
-}'
+    -H 'Content-Type: application/json' \
+    -d $'{
+        "filter":{
+            "visibleOnly":true,
+            "meetingIds": [5],
+            "orderBy": "name",
+            "sort": "desc"
+        }
+}'```
+You should receive a response similar to:
+```JSON
+{
+    races": {
+        "id": "83",
+        "meetingId": "8",
+        "name": "Wisconsin bats",
+        "number": "10",
+        "visible": true,
+        "advertisedStartTime": "2021-03-01T18:49:21Z",
+        "status": "CLOSED"
+    }
+    {
+        "id": "82",
+        "meetingId": "1",
+        "name": "Alabama ants",
+        "number": "123",
+        "visible": false,
+        "advertisedStartTime": "2021-03-021T18:49:21Z",
+        "status": "OPEN"
+    }
+
+}
 ```
 
-### Changes/Updates Required
+This will return a list of races in JSON format that looks similar to.
+##Future implementations:
+The major outstanding deficit in these projects are the lack of unit tests. Some tests that will need to be written but haven't yet are as follows:
 
-- We'd like to see you push this repository up to **GitHub/Gitlab/Bitbucket** and lodge a **Pull/Merge Request for each** of the below tasks.
-- This means, we'd end up with **5x PR's** in total. **Each PR should target the previous**, so they build on one-another.
-- Alternatively you can merge each PR/MR after each other into master.
-- This will allow us to review your changes as well as we possibly can.
-- As your code will be reviewed by multiple people, it's preferred if the repository is **publicly accessible**. 
-- If making the repository public is not possible; you may choose to create a separate account or ask us for multiple email addresses which you can then add as viewers. 
-
-... and now to the test! Please complete the following tasks.
-
-1. Add another filter to the existing RPC, so we can call `ListRaces` asking for races that are visible only.
-   > We'd like to continue to be able to fetch all races regardless of their visibility, so try naming your filter as logically as possible. https://cloud.google.com/apis/design/standard_methods#list
-2. We'd like to see the races returned, ordered by their `advertised_start_time`
-   > Bonus points if you allow the consumer to specify an ORDER/SORT-BY they might be after. 
-3. Our races require a new `status` field that is derived based on their `advertised_start_time`'s. The status is simply, `OPEN` or `CLOSED`. All races that have an `advertised_start_time` in the past should reflect `CLOSED`. 
-   > There's a number of ways this could be implemented. Just have a go!
-4. Introduce a new RPC, that allows us to fetch a single race by its ID.
-   > This link here might help you on your way: https://cloud.google.com/apis/design/standard_methods#get
-5. Create a `sports` service that for sake of simplicity, implements a similar API to racing. This sports API can be called `ListEvents`. We'll leave it up to you to determine what you might think a sports event is made up off, but it should at minimum have an `id`, a `name` and an `advertised_start_time`.
-
-> Note: this should be a separate service, not bolted onto the existing racing service. At an extremely high-level, the diagram below attempts to provide a visual representation showing the separation of services needed and flow of requests.
-> 
-> ![](example.png)
-
-
-**Don't forget:**
-
-> Document and comment! Please make sure your work is appropriately documented/commented, so fellow developers know whats going on.
-
-**Note:**
-
-To aid in proto generation following any changes, you can run `go generate ./...` from `api` and `racing` directories.
-
-Before you do so, please ensure you have the following installed. You can simply run the following command below in each of `api` and `racing` directories.
-
-```
-go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 google.golang.org/genproto/googleapis/api google.golang.org/grpc/cmd/protoc-gen-go-grpc google.golang.org/protobuf/cmd/protoc-gen-go
-```
-
-### Good Reading
-
-- [Protocol Buffers](https://developers.google.com/protocol-buffers)
-- [Google API Design](https://cloud.google.com/apis/design)
-- [Go Modules](https://golang.org/ref/mod)
-- [Ubers Go Style Guide](https://github.com/uber-go/guide/blob/2910ce2e11d0e0cba2cece2c60ae45e3a984ffe5/style.md)
+1. Creating mock responses to each endpoints HTTP requests
+1. Creating unit tests that craft HTTP requests to test the GET and POST requests of both the /races and /sports endpoints and then compare them to the expected result.
+1. The complete separation of the sports project from racing. This includes creating a new project called sports and extracting the sports code and logic from being entwined with racing to its own completely separate instance.
